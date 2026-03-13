@@ -1,0 +1,14 @@
+{
+  "java.format.settings.url": "${workspaceFolder}/config/formatting/eclipse-java-formatter.xml",
+  "java.format.settings.profile": "ProjectStyle",
+  "java.format.enabled": true,
+  "editor.formatOnSave": true,
+  "editor.formatOnSaveMode": "file",
+  "java.configuration.updateBuildConfiguration": "automatic",
+  "editor.defaultFormatter": "redhat.java",
+  "[java]": {
+    "editor.defaultFormatter": "redhat.java",
+    "editor.formatOnSave": true,
+    "editor.formatOnSaveMode": "file"
+  }
+}
