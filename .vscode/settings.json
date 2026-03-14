@@ -6,9 +6,11 @@
   "editor.formatOnSaveMode": "file",
   "java.configuration.updateBuildConfiguration": "automatic",
   "editor.defaultFormatter": "redhat.java",
+  "java.debug.settings.enableRunDebugCodeLens": false,
+  "editor.codeLens": false,
   "[java]": {
     "editor.defaultFormatter": "redhat.java",
     "editor.formatOnSave": true,
-    "editor.formatOnSaveMode": "file"
+    "editor.formatOnSaveMode": "file",
   }
 }
