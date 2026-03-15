@@ -215,7 +215,7 @@ jfr print --events CPULoad,ExecutionSample target/flight-recording.jfr
 
 ### Optional GUI analysis with JDK Mission Control
 
-For deeper interactive analysis, open the generated `.jfr` file with [JDK Mission Control (JMC)](https://openjdk.org/projects/jmc/).
+For deeper interactive analysis, open the generated `.jfr` file with [JDK Mission Control (JMC)](https://www.oracle.com/java/technologies/jdk-mission-control.html).
 
 Typical workflow:
 - Generate a recording with either `-Pjfr` or the section-level `Recording` API approach.
