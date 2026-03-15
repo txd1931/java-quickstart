@@ -69,6 +69,27 @@ Or run directly without packaging:
 .\mvnw.cmd test
 ```
 
+## Dependency workflow
+
+When adding dependencies, use this flow to keep the build strict and predictable:
+
+1. Add the dependency in `pom.xml` under `<dependencies>`.
+2. Prefer BOM-managed versions when available (the template already imports JUnit BOM).
+3. Run full verification.
+4. Check for available updates.
+
+```bash
+# Unix
+./mvnw verify
+./mvnw versions:display-dependency-updates versions:display-plugin-updates
+
+# Windows
+.\mvnw.cmd verify
+.\mvnw.cmd versions:display-dependency-updates versions:display-plugin-updates
+```
+
+`verify` includes strict dependency analysis (`maven-dependency-plugin:analyze-only`) and fails when dependencies are declared-but-unused or used-but-undeclared.
+
 ## Code Quality
 
 All checks run together during `verify`:
