@@ -74,9 +74,10 @@ Or run directly without packaging:
 When adding dependencies, use this flow to keep the build strict and predictable:
 
 1. Add the dependency in `pom.xml` under `<dependencies>`.
-2. Prefer BOM-managed versions when available (the template already imports JUnit BOM).
-3. Run full verification.
-4. Check for available updates.
+2. Prefer BOM-managed versions when available (the template imports `org.junit:junit-bom`).
+3. Declare direct usage explicitly (do not rely on transitive dependencies).
+4. Run full verification.
+5. Check for available updates.
 
 ```bash
 # Unix
@@ -89,6 +90,11 @@ When adding dependencies, use this flow to keep the build strict and predictable
 ```
 
 `verify` includes strict dependency analysis (`maven-dependency-plugin:analyze-only`) and fails when dependencies are declared-but-unused or used-but-undeclared.
+
+Example from this template:
+- Tests compile against `junit-jupiter-api`.
+- Test execution uses `junit-jupiter-engine`.
+- The dependency analyzer is configured to allow the engine as a reflective runtime dependency.
 
 ## Code Quality
 
@@ -103,6 +109,7 @@ All checks run together during `verify`:
 ```
 
 This runs, in order:
+- **Dependency analysis** — `maven-dependency-plugin:analyze-only` to enforce explicit and minimal dependencies
 - **Checkstyle** — Google Java Style enforcement
 - **Spotless** — formatting check against the Eclipse formatter config in `config/formatting/`
 - **SpotBugs** — static bug analysis
