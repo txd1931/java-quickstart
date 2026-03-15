@@ -206,8 +206,12 @@ Notes:
 
 ```
 src/
-  main/java/com/example/app/   # Application source
-  test/java/com/example/app/   # Test source
+  main/
+    java/com/example/app/       # Application source
+    resources/                  # Application resources
+  test/
+    java/com/example/app/       # Test source
+    resources/                  # Test resources
 config/
   formatting/                  # Eclipse formatter config (used by Spotless)
 ```
