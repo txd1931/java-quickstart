@@ -17,12 +17,17 @@ This template is designed for fast solo project bootstrap while remaining practi
 
 ## Requirements
 
-**Required**
-- Java 21 ([Adoptium Temurin](https://adoptium.net/) recommended)
+Required:
+
+- Java SDK (Java 21 recommended)
+- `JAVA_HOME` environment variable set to the installed JDK path
 - Git
 
-**Required for editor workflows**
-- [VS Code](https://code.visualstudio.com/) with the [Extension Pack for Java](https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-pack)
+Recommended for editor workflows:
+
+- [VS Code](https://code.visualstudio.com/)
+- [Language Support for Java(TM) by Red Hat](https://marketplace.visualstudio.com/items?itemName=redhat.java)
+- [Adoptium Temurin](https://adoptium.net/)
 
 Maven is bundled via the wrapper (`mvnw` / `mvnw.cmd`) — no separate Maven installation needed.
 
@@ -112,6 +117,90 @@ jdb -connect com.sun.jdi.SocketAttach:hostname=localhost,port=5005
 ```
 
 Default port is `5005`. Override with `-Ddebug.port=<port>`.
+
+## Java Flight Recorder (JFR)
+
+Run the app with the built-in JFR profiler enabled:
+
+```bash
+# Unix
+./mvnw -Pjfr compile exec:exec
+
+# Windows
+.\mvnw.cmd -Pjfr compile exec:exec
+```
+
+Default recording output: `target/flight-recording.jfr`.
+
+For whole-run profiling, customize recording settings at runtime:
+
+```bash
+# Windows example
+.\mvnw.cmd -Pjfr -Djfr.duration=120s -Djfr.settings=profile -Djfr.outputFile=target/custom.jfr compile exec:exec
+```
+
+### Section-level profiling
+
+For precise section boundaries, use the JFR API directly in code.
+
+```java
+import java.nio.file.Path;
+import jdk.jfr.Configuration;
+import jdk.jfr.Recording;
+
+public class ProfilerExample {
+
+  public static void main(String[] args) throws Exception {
+    Recording recording = new Recording(Configuration.getConfiguration("profile"));
+    recording.setName("section-profile");
+    recording.setDumpOnExit(true);
+
+    try {
+      recording.start();
+
+      runHeavyAlgorithm();
+
+    } finally {
+      recording.stop();
+      recording.dump(Path.of("target", "profile.jfr"));
+      recording.close();
+    }
+  }
+}
+```
+
+This approach records only the interval between `recording.start()` and `recording.stop()`, which is usually better for profiling a specific method or algorithm.
+
+Then inspect the section recording:
+
+```bash
+jfr summary target/profile.jfr
+jfr print --events ExecutionSample,CPULoad target/profile.jfr
+```
+
+Inspect the recording from the CLI:
+
+```bash
+jfr summary target/flight-recording.jfr
+jfr print --events CPULoad,ExecutionSample target/flight-recording.jfr
+```
+
+### Optional GUI analysis with JDK Mission Control
+
+For deeper interactive analysis, open the generated `.jfr` file with [JDK Mission Control (JMC)](https://openjdk.org/projects/jmc/).
+
+Typical workflow:
+- Generate a recording with either `-Pjfr` or the section-level `Recording` API approach.
+- Open JMC.
+- Load `target/flight-recording.jfr` (or `target/profile.jfr`).
+- Use the GUI views for flame graphs, method profiling, allocation analysis, GC pauses, and thread activity.
+
+JMC is optional, but it is often faster than CLI output for root-cause analysis and hotspot exploration.
+
+Notes:
+- `jfr.settings=profile` gives higher detail and is a good default for local investigation.
+- `jfr.duration` is optional. Use it to bound whole-run captures; for section-level analysis, custom events define the effective interval.
+- For long-running processes, prefer starting/stopping recordings with `jcmd` around the specific workflow to reduce noise.
 
 ## Project Structure
 
